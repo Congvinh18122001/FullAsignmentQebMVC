@@ -5,31 +5,33 @@
  using Microsoft.AspNetCore.Http;
  using Microsoft.AspNetCore.Mvc.Filters;
  using FirstAppMVC.Models;
+ using FirstAppMVC.Services;
  using Microsoft.AspNetCore.Mvc;
  namespace FirstAppMVC.Filters
  {
      public class AuthorizeActionFilter : IAuthorizationFilter
      {
-         public static List<Role> roles = new List<Role>(){
-            new Role(){Id=1,RoleName="Admin"}
-           ,new Role(){Id=2,RoleName="User"}
-        };
-        readonly string _permission;
-        public AuthorizeActionFilter(string permission)
+         readonly string _permission;
+         readonly TestService _service;
+         private List<Role> _roles;
+
+        public AuthorizeActionFilter(string permission,TestService service)
         {
             _permission = permission ;
+            _service = service;
+            _roles =  _service.GetRoles();
         }
         public void OnAuthorization(AuthorizationFilterContext context)
          {
-             var GetRoleId = context.HttpContext.Session.GetString("RoleId");
-             if (String.IsNullOrEmpty(GetRoleId))
+             var GetRoleID = context.HttpContext.Session.GetString("RoleID");
+             if (String.IsNullOrEmpty(GetRoleID))
              {
-                GetRoleId="-1";
+                GetRoleID="-1";
              }
-             Role  getRole = roles.SingleOrDefault(p => p.Id == Int32.Parse(GetRoleId));
+             Role  getRole = _roles.SingleOrDefault(p => p.ID == Int32.Parse(GetRoleID));
              if (getRole==null)
              {
-                 getRole = new Role(){Id=2,RoleName="User"};
+                 getRole = new Role(){ID=2,RoleName="User"};
              }
              if (_permission!=getRole.RoleName || getRole==null)
              {

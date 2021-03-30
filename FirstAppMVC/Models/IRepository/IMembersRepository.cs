@@ -7,10 +7,10 @@ namespace FirstAppMVC.Models
     public interface IMembersRepository
     {
         List<Member> GetMembers();
-        Member GetMemberByIndex(int index);
-        void AddMember(Member member);
-        void DeleteMember(int index);
-        Member UpdateMember(int index, Member member);
-        List<Member> GetMembersByName(string searchString);
+        Member AddMember(Member member);
+        void DeleteMember(int id);
+        Member UpdateMember( Member member);
+        Member GetMemberById(int id);
+        List<Member> GetMembersByName(string name);
     }
 }

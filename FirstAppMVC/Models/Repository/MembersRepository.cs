@@ -7,53 +7,48 @@ namespace FirstAppMVC.Models
 {
     public class MembersRepository : IMembersRepository
     {
-       private static List<Member> members = new List<Member>(){
-            new Member() { Name="Truong Cong Vinh",Phone="0123654789",Birthday="18/12/2001",Gender="Male",Email="asd12@gmail.com",BirthPlace="Hai Phong"}
-            ,new Member() { Name="Truong Cong Minh",Phone="0123654789",Birthday="18/12/2000",Gender="Male",Email="asd2@gmail.com",BirthPlace="Ha Noi"}
-            ,new Member() { Name="Truong Cong Tuan",Phone="0123654789",Birthday="18/12/1999",Gender="Male",Email="asd3@gmail.com" ,BirthPlace="Hai Phong"}
-            ,new Member() { Name="Truong Cong Tu",Phone="0123654789",Birthday="18/12/1998",Gender="Male",Email="asd4@gmail.com",BirthPlace="Ha Noi"}
-            ,new Member() { Name="Truong Cong Duc",Phone="0123654789",Birthday="18/12/2000",Gender="Male",Email="asd5@gmail.com",BirthPlace="Ha Nam"}
-            };
-        public List<Member> GetMembersByName(string searchString){
-              if (String.IsNullOrEmpty(searchString))
-              {
-                  return members;
-              }
-              return members.Where(p=>p.Name.Contains(searchString)).ToList();
+        private readonly FirstAppMVCContext _dbContext;
+
+        public MembersRepository(FirstAppMVCContext dbContext)
+        {
+            _dbContext = dbContext;
         }
-        public void DeleteMember(int index){
-            if (CheckIndexIsValid(index))
+        public List<Member> GetMembersByName(string name){
+            if (String.IsNullOrEmpty(name))
             {
-                members.RemoveAt(index);
+                return GetMembers();
             }
+            return _dbContext.Members.Where(m => m.Name.Contains(name)).ToList();
         }
 
-        public List<Member> GetMembers(){
-             return members;
-        } 
-        public Member GetMemberByIndex(int index){
-            if (!CheckIndexIsValid(index))
-            {
-                return null;
-            }
-            Member member = members[index];
+        public Member AddMember(Member member){
+            _dbContext.Members.Add(member);
+            _dbContext.SaveChanges();
             return member;
         }
-        public void AddMember(Member member){
-            members.Add(member);
+
+        public void DeleteMember(int id) {
+            _dbContext.Members.Remove(_dbContext.Members.SingleOrDefault(p=>p.ID==id));
+            _dbContext.SaveChanges();
+        }
+        public Member UpdateMember(Member member){
+            Member getMember = _dbContext.Members.Find(member.ID);
+            getMember.Name = member.Name;
+            getMember.Gender = member.Gender;
+            getMember.Birthday = member.Birthday;
+            getMember.Phone = member.Phone;
+            getMember.Email = member.Email;
+            getMember.BirthPlace = member.BirthPlace;
+            _dbContext.SaveChanges();
+            return getMember;
+        } 
+
+        public List<Member> GetMembers() {
+            return _dbContext.Members.ToList();
         }
 
-        bool CheckIndexIsValid(int index){
-            return (index < members.Count && index >=0);
-        }
-
-        public Member UpdateMember(int index, Member member){
-            if (CheckIndexIsValid(index))
-            {
-                members[index] = member;
-            }
-            return members[index];
-        }
-
+        public Member GetMemberById(int id) => _dbContext.Members.SingleOrDefault(p=>p.ID == id);
+        
+            
     }
 }

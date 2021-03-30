@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FirstAppMVC.Models;
 using Microsoft.AspNetCore.Http;
+using FirstAppMVC.Services;
 namespace FirstAppMVC.Controllers
 {
     public class HomeController : Controller
     {
 
 
-        public static List<User> users = new List<User>(){
-            new User(){UserId=1,Username="Admin",Password="123",RoleId=1}
-           ,new User(){UserId=1,Username="User",Password="123",RoleId=2}
-        };
-
+        private List<User> _users ;
+        private readonly ITestService _service;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,ITestService service)
         {
             _logger = logger;
+             _service = service;
+            _users = _service.GetUsers();  
+            
         }
 
         public IActionResult Index()
@@ -73,18 +74,18 @@ namespace FirstAppMVC.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("Username");
-            HttpContext.Session.Remove("RoleId");
+            HttpContext.Session.Remove("RoleID");
             
             return RedirectToAction("Index");
         }
 
         void AddUserToSession(User user){
             HttpContext.Session.SetString("Username",user.Username);
-            HttpContext.Session.SetString("RoleId",user.RoleId.ToString());
+            HttpContext.Session.SetString("RoleID",user.RoleID.ToString());
         }  
 
         User CheckLogin(User user){
-            foreach (var item in users)
+            foreach (var item in _users)
             {
                 if (user.Username == item.Username && user.Password== item.Password)
                 {
@@ -93,10 +94,6 @@ namespace FirstAppMVC.Controllers
             }
             return null;
         }
-        public IActionResult TestService()
-        {
-            
-            return View();
-        }
+    
     }
 }

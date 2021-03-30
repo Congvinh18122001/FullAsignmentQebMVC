@@ -1,20 +1,25 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 namespace FirstAppMVC.Models
 {
     public class User
     {
         [Required]
-        public int UserId {get;set;}
+        [Key]
+        public int UserID {get;set;}
         [Required]
         public string Username {get;set;}
         [Required]
         public string Password {get;set;}
-        public int RoleId {get;set;} 
+        public int RoleID {get;set;} 
+        public virtual Role Role { get; set; }
     }
     public class Role
     {
-        public int Id {get;set;}
+        public int ID {get;set;}
         public string RoleName{get;set;}
+        public virtual List<User> Users { get; set; }
     }
 }
 

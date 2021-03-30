@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FirstAppMVC.Services;
+using Microsoft.EntityFrameworkCore;
+using FirstAppMVC.Models;
 namespace FirstAppMVC
 {
     public class Startup
@@ -24,6 +26,10 @@ namespace FirstAppMVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ITestService,TestService>();
+            services.AddScoped<IMembersRepository,MembersRepository>();
+            
+            services.AddDbContext<FirstAppMVCContext>(
+              options => options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
             services.AddControllersWithViews();
             services.AddSession();
         }

@@ -35,6 +35,6 @@
     <label asp-for="BirthPlace">BirthPlace:</label>
     <input type="text" asp-for="BirthPlace" value="@Model.BirthPlace" class="form-control" id="BirthPlace" required>
   </div>
-    <input type="text" name="index" value="@(ViewBag.Index)" class="form-control" hidden>
+    <input type="text" asp-for="ID" value="@Model.ID" class="form-control" id="ID" hidden>
   <button type="submit" class="btn btn-primary">Submit</button>
 }

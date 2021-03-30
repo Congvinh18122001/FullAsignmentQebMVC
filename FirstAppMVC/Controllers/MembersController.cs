@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FirstAppMVC.Models;
 using FirstAppMVC.Filters;
@@ -8,106 +9,87 @@ namespace FirstAppMVC.Controllers
 {
     public class MembersController : Controller
     {
-        private  IMembersRepository resp = new MembersRepository();
-
-        public IActionResult Search(string SearchString)
+        private readonly IMembersRepository _repo;
+        public MembersController(IMembersRepository repo)
         {
-            if (String.IsNullOrEmpty(SearchString))
-            {
-                return RedirectToAction("List");
-            }
-            return View("List",resp.GetMembersByName(SearchString));
+            _repo = repo;
         }
 
+        public IActionResult Index()
+        {
+            List<Member> members = _repo.GetMembers();
+            return View(members);
+        }
+
+        public IActionResult Details(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(_repo.GetMemberById(id.Value));
+        }
         [Authorize("Admin")]
-        public IActionResult Create(){
+        public IActionResult Edit(int? id)
+        {
+             if (!id.HasValue)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(_repo.GetMemberById(id.Value));
+        }
+        [HttpPost]
+        public IActionResult Edit(Member member)
+        {
+            if (member == null)
+            {
+              return RedirectToAction("Index");
+            }
+               member=_repo.UpdateMember(member);
+            return RedirectToAction("Details",member.ID);
+        
+        }
+        [Authorize("Admin")]
+        public IActionResult Create()
+        {
             return View();
         }
         [HttpPost]
-         public IActionResult CreateMember(Member member){
-
-            if (member==null)
-            {
-                 return RedirectToAction("List");
-            }
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Create");
-            }
-            resp.AddMember(member);
-            return RedirectToAction("List");
-        }
-        public IActionResult Details(int? i){
-            if (!i.HasValue)
-            {
-                return RedirectToAction("List");
-            }
-            Member member = resp.GetMemberByIndex(i.Value);
-            if (member==null)
-            {
-                   return RedirectToAction("List");
-            }
-             return View(member);
-        }
-        public IActionResult List()
+           public IActionResult Create(Member member)
         {
-            return View(resp.GetMembers());
+             if (member == null)
+            {
+              return RedirectToAction("Index");
+            }
+               member=_repo.AddMember(member);
+            return RedirectToAction("Details",member.ID);
         }
         [Authorize("Admin")]
-        public IActionResult Delete(int? i)
+        public IActionResult Delete(int? id)
         {
-            if (!i.HasValue)
+             if (!id.HasValue)
             {
-              return RedirectToAction("List");
+                return RedirectToAction("Index");
             }
-            Member member = resp.GetMemberByIndex(i.Value);
-            if (member==null)
+            Member member =_repo.GetMemberById(id.Value);
+            if (member != null)
             {
-                   return RedirectToAction("List");
+                return View(member);
             }
-            ViewBag.IndexDelete=i.Value;
-             return View(member);  
-        }
-        [HttpPost]
-        public IActionResult DeleteMember(int? i)
-        {
-            if (!i.HasValue)
-            {
-              return RedirectToAction("List");
-            }
-            resp.DeleteMember(i.Value);
+            return RedirectToAction("Index");
             
-            return RedirectToAction("List");
-        }
-        [Authorize("Admin")]
-        public IActionResult EditForm(int? i)
-        {
-             if (!i.HasValue)
-            {
-                return RedirectToAction("List");
-            }
-            Member member = resp.GetMemberByIndex(i.Value);
-            if (member==null)
-            {
-                   return RedirectToAction("List");
-            }
-            ViewBag.Index = i;
-            return View(member);
         }
         [HttpPost]
-        public IActionResult Edit(int index,Member member)
+        public IActionResult Delete(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("EditForm",new{i=index});
-            }
-            if (index == null || member == null)
-            {
-                return RedirectToAction("List"); 
-            }
-            Member memberUpdate = resp.UpdateMember(index, member);
-            return RedirectToAction("Details",memberUpdate);
+            _repo.DeleteMember(id);
+            return RedirectToAction("Index");
         }
+        [HttpGet]
+        public IActionResult Search(string searchString)
+        {
+            return View("Index",_repo.GetMembersByName(searchString));
+        }
+
     }
 }
-
