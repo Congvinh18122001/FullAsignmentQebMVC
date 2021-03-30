@@ -123,3 +123,5 @@ D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\FirstAppMVC.pd
 D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\FirstAppMVC.genruntimeconfig.cache
 D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\Razor\Views\Members\Index.cshtml.g.cs
 D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\Razor\Views\Members\Edit.cshtml.g.cs
+D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\Razor\Views\Account\Details.cshtml.g.cs
+D:\RookiesActive\FullAsignmentQebMVC\FirstAppMVC\obj\Debug\net5.0\Razor\Views\Account\Register.cshtml.g.cs

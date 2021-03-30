@@ -1,0 +1,28 @@
+@model FirstAppMVC.Models.User
+@inject FirstAppMVC.Services.ITestService service
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+@using(Html.BeginForm()) {
+   <div class="form-group">
+    <label asp-for="RoleID">Role:</label>
+    <select asp-for="RoleID" class="form-control">
+        @foreach (var item in service.GetRoles())
+        {
+            <option value="@item.ID">@item.RoleName</option>
+        }
+    </select>
+  </div>
+   <div class="form-group">
+    <label asp-for="Username">Username:</label>
+    <input type="text" class="form-control" asp-for="Username">
+  </div>
+  <div class="asp-form-group">
+    <label asp-for="Password">Password:</label>
+    <input type="password" class="form-control" asp-for="Password">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Register</button>
+}

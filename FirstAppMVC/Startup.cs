@@ -27,7 +27,7 @@ namespace FirstAppMVC
         {
             services.AddScoped<ITestService,TestService>();
             services.AddScoped<IMembersRepository,MembersRepository>();
-            
+            services.AddScoped<IAccountRepository,AccountRepository>();
             services.AddDbContext<FirstAppMVCContext>(
               options => options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
             services.AddControllersWithViews();
